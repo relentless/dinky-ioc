@@ -1,7 +1,0 @@
-E:\Programming\Diggy\Diggy\bin\Debug\Diggy.Contracts.dll
-E:\Programming\Diggy\Diggy\bin\Debug\Diggy.Contracts.pdb
-E:\Programming\Diggy\Diggy\bin\Debug\Diggy.dll
-E:\Programming\Diggy\Diggy\bin\Debug\Diggy.pdb
-E:\Programming\Diggy\Diggy\obj\Debug\ResolveAssemblyReference.cache
-E:\Programming\Diggy\Diggy\obj\Debug\Diggy.dll
-E:\Programming\Diggy\Diggy\obj\Debug\Diggy.pdb
