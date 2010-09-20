@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Diggy;
+using Dinky;
 
-namespace Diggy.Tests {
+namespace Dinky.Tests {
     
     [TestFixture]
     public class Container_Tests {
@@ -22,6 +22,21 @@ namespace Diggy.Tests {
         }
 
         [Test]
+        public void DependencyMappedToExistingInstance_CalledTwice_ReturnsSameInstance() {
+            // arrange
+            Container container = new Container();
+            Dependency injectedDependency = new Dependency();
+
+            // act
+            container.map<IDependency>().to(injectedDependency);
+            IDependency result1 = container.resolve<IDependency>();
+            IDependency result2 = container.resolve<IDependency>();
+
+            //assert
+            Assert.AreSame(result1, result2);
+        }
+
+        [Test]
         public void DependencyMappedToNewInstance_CalledTwice_ReturnsTwoDifferentNewInstances() {
             // arrange
             Container container = new Container();
@@ -36,7 +51,7 @@ namespace Diggy.Tests {
         }
 
         [Test]
-        public void DependencyHasDependency_ReturnsDependencyWithDependencyResolved() {
+        public void ResolvedClassHasDependency_ContainerKnowsHowToResolveDependency_ReturnsClassWithDependencyResolved() {
             // arrange
             Container container = new Container();
 
@@ -46,6 +61,19 @@ namespace Diggy.Tests {
 
             //assert
             //Assert.AreEqual(injectedDependency, result);
+        }
+
+        [Test]
+        public void ResolveTypeWithParameterlessConstructor_FromLoadedAssembly_NoMappingDefined_CreatesNewInstance()
+        {
+            // arrange
+            Container container = new Container();
+
+            // act
+            IDependency result = container.resolve<IDependency>();
+
+            //assert
+            Assert.IsTrue(result is IDependency);
         }
     }
 
@@ -58,11 +86,4 @@ namespace Diggy.Tests {
     }
 
     public interface IDependency {}
-
-    //internal class Dependent {
-    //    internal IDependency _dependency;
-    //    internal Dependent(IDependency dependency) {
-    //        _dependency = dependency;
-    //    }
-    //}
 }
