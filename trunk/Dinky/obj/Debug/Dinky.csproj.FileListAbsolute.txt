@@ -1,0 +1,14 @@
+E:\Programming\Diggy\Diggy\bin\Debug\Dinky.Contracts.dll
+E:\Programming\Diggy\Diggy\bin\Debug\Dinky.Contracts.pdb
+E:\Programming\Diggy\Diggy\bin\Debug\Dinky.dll
+E:\Programming\Diggy\Diggy\bin\Debug\Dinky.pdb
+E:\Programming\Diggy\Diggy\obj\Debug\ResolveAssemblyReference.cache
+E:\Programming\Diggy\Diggy\obj\Debug\Dinky.dll
+E:\Programming\Diggy\Diggy\obj\Debug\Dinky.pdb
+E:\Programming\Dinky\Dinky\bin\Debug\Dinky.Contracts.dll
+E:\Programming\Dinky\Dinky\bin\Debug\Dinky.Contracts.pdb
+E:\Programming\Dinky\Dinky\bin\Debug\Dinky.dll
+E:\Programming\Dinky\Dinky\bin\Debug\Dinky.pdb
+E:\Programming\Dinky\Dinky\obj\Debug\ResolveAssemblyReference.cache
+E:\Programming\Dinky\Dinky\obj\Debug\Dinky.dll
+E:\Programming\Dinky\Dinky\obj\Debug\Dinky.pdb

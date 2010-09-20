@@ -1,0 +1,11 @@
+E:\Programming\Diggy\Diggy_Tests\obj\Debug\ResolveAssemblyReference.cache
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\Diggy.Tests.Contracts.dll
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\Diggy.Tests.Contracts.pdb
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\Diggy.Tests.dll
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\Diggy.Tests.pdb
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\Diggy.dll
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\nunit.framework.dll
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\Rhino.Mocks.dll
+E:\Programming\Diggy\Diggy_Tests\bin\Debug\Diggy.pdb
+E:\Programming\Diggy\Diggy_Tests\obj\Debug\Diggy.Tests.dll
+E:\Programming\Diggy\Diggy_Tests\obj\Debug\Diggy.Tests.pdb
