@@ -11,26 +11,26 @@ namespace Dinky.Tests {
         public void DependencyMappedToExistingInstance_ReturnsExistingInstance() {
             // arrange
             Container container = new Container();
-            Dependency injectedDependency = new Dependency();
+            Dependency specificDependency = new Dependency();
 
             // act
-            container.map<IDependency>().to(injectedDependency);
-            IDependency result = container.resolve<IDependency>();
+            container.Map<IDependency>().ToThis(specificDependency);
+            var result = container.Resolve<IDependency>();
 
             //assert
-            Assert.AreEqual(injectedDependency, result);
+            Assert.AreEqual(specificDependency, result);
         }
 
         [Test]
         public void DependencyMappedToExistingInstance_CalledTwice_ReturnsSameInstance() {
             // arrange
             Container container = new Container();
-            Dependency injectedDependency = new Dependency();
+            Dependency specificDependency = new Dependency();
 
             // act
-            container.map<IDependency>().to(injectedDependency);
-            IDependency result1 = container.resolve<IDependency>();
-            IDependency result2 = container.resolve<IDependency>();
+            container.Map<IDependency>().ToThis(specificDependency);
+            var result1 = container.Resolve<IDependency>();
+            var result2 = container.Resolve<IDependency>();
 
             //assert
             Assert.AreSame(result1, result2);
@@ -42,9 +42,9 @@ namespace Dinky.Tests {
             Container container = new Container();
 
             // act
-            container.map<IDependency>().toNew<Dependency>();
-            IDependency result1 = container.resolve<IDependency>();
-            IDependency result2 = container.resolve<IDependency>();
+            container.Map<IDependency>().To<Dependency>();
+            var result1 = container.Resolve<IDependency>();
+            var result2 = container.Resolve<IDependency>();
 
             //assert
             Assert.AreNotEqual(result1, result2);
@@ -56,30 +56,109 @@ namespace Dinky.Tests {
             Container container = new Container();
 
             // act
-            container.map<IDependant>().toNew<Dependant>();
-            IDependant result = container.resolve<IDependant>();
+            container.Map<IDependant>().To<Dependant>();
+            var result = container.Resolve<IDependant>();
 
             //assert
             //Assert.AreEqual(injectedDependency, result);
         }
 
         [Test]
-        public void ResolveTypeWithParameterlessConstructor_FromLoadedAssembly_NoMappingDefined_CreatesNewInstance()
+        public void ResolveTypeFromLoadedAssembly_NoMappingDefined_AllowDynamicResolveSetTrue_TypeAvailableInLoadedAssembly_CreatesNewInstance()
         {
+            // arrange
+            Container container = new Container();
+            container.AllowDynamicResolveFromLoadedAssemblies = true;
+
+            // act
+            var result = container.Resolve<IDependency>();
+
+            //assert
+            Assert.IsTrue(result is IDependency);
+        }
+
+        [Test]
+        [ExpectedException(typeof(Exception))]
+        public void ResolveTypeFromLoadedAssembly_NoMappingDefined_AllowDynamicResolveSetTrue_TypeNotAvailableInLoadedAssembly_ThrowsException() {
+            // arrange
+            Container container = new Container();
+            container.AllowDynamicResolveFromLoadedAssemblies = true;
+
+            // act
+            var result = container.Resolve<INoImplementation>();
+
+            // (exception)
+        }
+
+        [Test]
+        [ExpectedException(typeof(Exception))]
+        public void ResolveTypeFromLoadedAssembly_NoMappingDefined_AllowDynamicResolveLeftFalse_ThrowsException() {
             // arrange
             Container container = new Container();
 
             // act
-            IDependency result = container.resolve<IDependency>();
+            IDependency result = container.Resolve<IDependency>();
+
+            // (exception)
+        }
+
+        [Test]
+        public void CanResolve_MappingDefined_ReturnsTrue() {
+            // arrange
+            Container container = new Container();
+            container.Map<IDependency>().To<Dependency>();
+
+            // act
+            bool result = container.CanResolve<IDependency>();
 
             //assert
-            Assert.IsTrue(result is IDependency);
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void CanResolve_NoMappingDefined_AllowDynamicResolveLeftFalse_ReturnsFalse() {
+            // arrange
+            Container container = new Container();
+
+            // act
+            bool result = container.CanResolve<IDependency>();
+
+            //assert
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void CanResolve_NoMappingDefined_AllowDynamicResolveSetTrue_TypeAvailableInLoadedAssembly_ReturnsTrue() {
+            // arrange
+            Container container = new Container();
+            container.AllowDynamicResolveFromLoadedAssemblies = true;
+
+            // act
+            bool result = container.CanResolve<IDependency>();
+
+            //assert
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void CanResolve_NoMappingDefined_AllowDynamicResolveSetTrue_TypeNotAvailableInLoadedAssembly_ReturnsFalse() {
+            // arrange
+            Container container = new Container();
+            container.AllowDynamicResolveFromLoadedAssemblies = true;
+
+            // act
+            bool result = container.CanResolve<INoImplementation>();
+
+            //assert
+            Assert.IsFalse(result);
         }
     }
 
     public class Dependency : IDependency { }
 
     public interface IDependant { }
+
+    public interface INoImplementation { }
 
     public class Dependant: IDependant {
         public Dependant(IDependency dependency) { }
