@@ -8,10 +8,12 @@ namespace Dinky {
 
         protected Dictionary<Type, Func<object>> _dependencies = new Dictionary<Type, Func<object>>();
 
+        public bool AllowDynamicResolveFromLoadedAssemblies { get; set; }
+
         public Container() {
         }
 
-        public ContainerResolutionType map<T>() {
+        public ContainerResolutionType Map<T>() {
             return new ContainerResolutionType(this, typeof(T));
         }
 
@@ -19,19 +21,19 @@ namespace Dinky {
             _dependencies.Add(Type, Dependency);
         }
 
-        public T resolve<T>(){
+        public T Resolve<T>(){
             Func<object> dependency = null;
             if (_dependencies.TryGetValue(typeof(T), out dependency)){
                 return (T)dependency.Invoke();
             }
-            else{
+            else if (AllowDynamicResolveFromLoadedAssemblies){
                 foreach (Type typeImplementingInterface in TypesImplementingInterface(typeof(T))) {
                     if (typeImplementingInterface.GetConstructor(Type.EmptyTypes) != null) {
                         return (T)Activator.CreateInstance(typeImplementingInterface);
                     }
                 }
             }
-            return default(T);
+            throw new Exception(string.Format("Dinky cannot resolve type {0}", typeof(T)));
         }
 
         public static IEnumerable<Type> TypesImplementingInterface(Type desiredType) {
@@ -49,6 +51,20 @@ namespace Dinky {
                 && testType.IsGenericTypeDefinition == false
                 && testType.IsInterface == false;
         }
+
+        public bool CanResolve<T>() {
+            if (_dependencies.Keys.Contains(typeof(T))) {
+                return true;
+            }
+
+            if (AllowDynamicResolveFromLoadedAssemblies) {
+                if (TypesImplementingInterface(typeof(T)).Count() > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     public class ContainerResolutionType {
@@ -60,11 +76,11 @@ namespace Dinky {
             _type = Type;
         }
 
-        public void to(object dependency) {
+        public void ToThis(object dependency) {
             _container.AddDepencency(_type, delegate { return dependency; });
         }
 
-        public void toNew<T>() {
+        public void To<T>() {
             _container.AddDepencency(_type, delegate { return Activator.CreateInstance<T>(); });
         }
     }
