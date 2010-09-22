@@ -6,16 +6,21 @@ using Dinky;
 namespace Dinky.Tests {
     
     [TestFixture]
-    public class Container_Tests {
+    public class Dinky_Tests {
+        [TearDown]
+        public void TearDown() {
+            Dinky.ClearMappings();
+            Dinky.AllowDynamicResolveFromLoadedAssemblies = false;
+        }
+
         [Test]
         public void DependencyMappedToExistingInstance_ReturnsExistingInstance() {
             // arrange
-            Container container = new Container();
             Dependency specificDependency = new Dependency();
 
             // act
-            container.Map<IDependency>().ToThis(specificDependency);
-            var result = container.Resolve<IDependency>();
+            Dinky.Map<IDependency>().ToThis(specificDependency);
+            var result = Dinky.Resolve<IDependency>();
 
             //assert
             Assert.AreEqual(specificDependency, result);
@@ -24,13 +29,12 @@ namespace Dinky.Tests {
         [Test]
         public void DependencyMappedToExistingInstance_CalledTwice_ReturnsSameInstance() {
             // arrange
-            Container container = new Container();
             Dependency specificDependency = new Dependency();
 
             // act
-            container.Map<IDependency>().ToThis(specificDependency);
-            var result1 = container.Resolve<IDependency>();
-            var result2 = container.Resolve<IDependency>();
+            Dinky.Map<IDependency>().ToThis(specificDependency);
+            var result1 = Dinky.Resolve<IDependency>();
+            var result2 = Dinky.Resolve<IDependency>();
 
             //assert
             Assert.AreSame(result1, result2);
@@ -39,12 +43,11 @@ namespace Dinky.Tests {
         [Test]
         public void DependencyMappedToNewInstance_CalledTwice_ReturnsTwoDifferentNewInstances() {
             // arrange
-            Container container = new Container();
 
             // act
-            container.Map<IDependency>().To<Dependency>();
-            var result1 = container.Resolve<IDependency>();
-            var result2 = container.Resolve<IDependency>();
+            Dinky.Map<IDependency>().To<Dependency>();
+            var result1 = Dinky.Resolve<IDependency>();
+            var result2 = Dinky.Resolve<IDependency>();
 
             //assert
             Assert.AreNotEqual(result1, result2);
@@ -53,11 +56,10 @@ namespace Dinky.Tests {
         [Test]
         public void ResolvedClassHasDependency_ContainerKnowsHowToResolveDependency_ReturnsClassWithDependencyResolved() {
             // arrange
-            Container container = new Container();
 
             // act
-            container.Map<IDependant>().To<Dependant>();
-            var result = container.Resolve<IDependant>();
+            Dinky.Map<IDependant>().To<Dependant>();
+            var result = Dinky.Resolve<IDependant>();
 
             //assert
             //Assert.AreEqual(injectedDependency, result);
@@ -67,11 +69,10 @@ namespace Dinky.Tests {
         public void ResolveTypeFromLoadedAssembly_NoMappingDefined_AllowDynamicResolveSetTrue_TypeAvailableInLoadedAssembly_CreatesNewInstance()
         {
             // arrange
-            Container container = new Container();
-            container.AllowDynamicResolveFromLoadedAssemblies = true;
+            Dinky.AllowDynamicResolveFromLoadedAssemblies = true;
 
             // act
-            var result = container.Resolve<IDependency>();
+            var result = Dinky.Resolve<IDependency>();
 
             //assert
             Assert.IsTrue(result is IDependency);
@@ -81,11 +82,10 @@ namespace Dinky.Tests {
         [ExpectedException(typeof(Exception))]
         public void ResolveTypeFromLoadedAssembly_NoMappingDefined_AllowDynamicResolveSetTrue_TypeNotAvailableInLoadedAssembly_ThrowsException() {
             // arrange
-            Container container = new Container();
-            container.AllowDynamicResolveFromLoadedAssemblies = true;
+            Dinky.AllowDynamicResolveFromLoadedAssemblies = true;
 
             // act
-            var result = container.Resolve<INoImplementation>();
+            var result = Dinky.Resolve<INoImplementation>();
 
             // (exception)
         }
@@ -94,10 +94,9 @@ namespace Dinky.Tests {
         [ExpectedException(typeof(Exception))]
         public void ResolveTypeFromLoadedAssembly_NoMappingDefined_AllowDynamicResolveLeftFalse_ThrowsException() {
             // arrange
-            Container container = new Container();
 
             // act
-            IDependency result = container.Resolve<IDependency>();
+            IDependency result = Dinky.Resolve<IDependency>();
 
             // (exception)
         }
@@ -105,11 +104,10 @@ namespace Dinky.Tests {
         [Test]
         public void CanResolve_MappingDefined_ReturnsTrue() {
             // arrange
-            Container container = new Container();
-            container.Map<IDependency>().To<Dependency>();
+            Dinky.Map<IDependency>().To<Dependency>();
 
             // act
-            bool result = container.CanResolve<IDependency>();
+            bool result = Dinky.CanResolve<IDependency>();
 
             //assert
             Assert.IsTrue(result);
@@ -118,10 +116,9 @@ namespace Dinky.Tests {
         [Test]
         public void CanResolve_NoMappingDefined_AllowDynamicResolveLeftFalse_ReturnsFalse() {
             // arrange
-            Container container = new Container();
 
             // act
-            bool result = container.CanResolve<IDependency>();
+            bool result = Dinky.CanResolve<IDependency>();
 
             //assert
             Assert.IsFalse(result);
@@ -130,11 +127,10 @@ namespace Dinky.Tests {
         [Test]
         public void CanResolve_NoMappingDefined_AllowDynamicResolveSetTrue_TypeAvailableInLoadedAssembly_ReturnsTrue() {
             // arrange
-            Container container = new Container();
-            container.AllowDynamicResolveFromLoadedAssemblies = true;
+            Dinky.AllowDynamicResolveFromLoadedAssemblies = true;
 
             // act
-            bool result = container.CanResolve<IDependency>();
+            bool result = Dinky.CanResolve<IDependency>();
 
             //assert
             Assert.IsTrue(result);
@@ -143,11 +139,10 @@ namespace Dinky.Tests {
         [Test]
         public void CanResolve_NoMappingDefined_AllowDynamicResolveSetTrue_TypeNotAvailableInLoadedAssembly_ReturnsFalse() {
             // arrange
-            Container container = new Container();
-            container.AllowDynamicResolveFromLoadedAssemblies = true;
+            Dinky.AllowDynamicResolveFromLoadedAssemblies = true;
 
             // act
-            bool result = container.CanResolve<INoImplementation>();
+            bool result = Dinky.CanResolve<INoImplementation>();
 
             //assert
             Assert.IsFalse(result);
