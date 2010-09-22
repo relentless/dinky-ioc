@@ -4,24 +4,24 @@ using System.Reflection;
 using System.Linq;
 
 namespace Dinky {
-    public class Container {
+    public static class Dinky {
 
-        protected Dictionary<Type, Func<object>> _dependencies = new Dictionary<Type, Func<object>>();
+        private static Dictionary<Type, Func<object>> _dependencies = new Dictionary<Type, Func<object>>();
 
-        public bool AllowDynamicResolveFromLoadedAssemblies { get; set; }
+        public static bool AllowDynamicResolveFromLoadedAssemblies { get; set; }
 
-        public Container() {
+        public static void ClearMappings() {
+            _dependencies.Clear();
+        }
+        public static ContainerResolutionType Map<T>() {
+            return new ContainerResolutionType(typeof(T));
         }
 
-        public ContainerResolutionType Map<T>() {
-            return new ContainerResolutionType(this, typeof(T));
-        }
-
-        internal void AddDepencency(Type Type, Func<object> Dependency) {
+        internal static void AddDepencency(Type Type, Func<object> Dependency) {
             _dependencies.Add(Type, Dependency);
         }
 
-        public T Resolve<T>(){
+        public static T Resolve<T>() {
             Func<object> dependency = null;
             if (_dependencies.TryGetValue(typeof(T), out dependency)){
                 return (T)dependency.Invoke();
@@ -41,10 +41,11 @@ namespace Dinky {
                 .CurrentDomain
                 .GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => desiredType.IsAssignableFrom(type));
+                .Where(type => desiredType.IsAssignableFrom(type) &&
+                    desiredType != type);
         }
 
-        public bool CanResolve<T>() {
+        public static bool CanResolve<T>() {
             if (_dependencies.Keys.Contains(typeof(T))) {
                 return true;
             }
@@ -60,20 +61,20 @@ namespace Dinky {
     }
 
     public class ContainerResolutionType {
-        private Container _container;
+        //private Dinky _container;
         private Type _type;
 
-        internal ContainerResolutionType(Container Container, Type Type) {
-            _container = Container;
+        internal ContainerResolutionType(Type Type) {
+            //_container = Container;
             _type = Type;
         }
 
         public void ToThis(object dependency) {
-            _container.AddDepencency(_type, delegate { return dependency; });
+            Dinky.AddDepencency(_type, delegate { return dependency; });
         }
 
         public void To<T>() {
-            _container.AddDepencency(_type, delegate { return Activator.CreateInstance<T>(); });
+            Dinky.AddDepencency(_type, delegate { return Activator.CreateInstance<T>(); });
         }
     }
 }
