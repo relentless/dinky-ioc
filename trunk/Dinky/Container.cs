@@ -41,15 +41,7 @@ namespace Dinky {
                 .CurrentDomain
                 .GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => desiredType.IsAssignableFrom(type) &&
-                    IsRealClass(type));
-
-        }
-
-        public static bool IsRealClass(Type testType) {
-            return testType.IsAbstract == false
-                && testType.IsGenericTypeDefinition == false
-                && testType.IsInterface == false;
+                .Where(type => desiredType.IsAssignableFrom(type));
         }
 
         public bool CanResolve<T>() {
